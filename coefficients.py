@@ -1,5 +1,5 @@
 import math
-from timing_analysis import dmx_utils
+from NG_timing_analysis import dmx_utils
 
 def c(n,nulim):
     nulow,nuhigh = nulim
