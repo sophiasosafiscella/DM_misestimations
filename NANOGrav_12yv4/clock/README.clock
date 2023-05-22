@@ -1,0 +1,14 @@
+This directory contains clock correction files appropriate for the NANOGrav
+12.5-year dataset.  Consistent versions of these files should already exist in
+the git repositories of both tempo and tempo2.  However, these copies can be
+installed manually as needed (or compared against the git versions, etc).
+
+Manual installation:
+
+  cp time_gbt.dat time_ao.dat bipmnist.17.extrap ut1.dat $TEMPO/clock/
+
+  cp gbt2gps.dat ao2gps.clk tai2tt_bipm2017.clk ut1.dat $TEMPO2/clock/
+
+
+Note that PINT uses the clock files from tempo. Therefore, if using PINT, ensure
+that your tempo installation includes updated clock files.
