@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 from matplotlib import rc
 import matplotlib.style as style
 from matplotlib.ticker import FormatStrFormatter
-
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -14,7 +13,12 @@ nterms = 3
 sns.set_style("ticks")
 sns.set_context("paper")
 
+#style.use('tableau-coloblind')
 style.use('seaborn-colorblind')
+colors = sns.color_palette("colorblind").as_hex()
+#colors = ["#FF99C8", "#FCF6BD", "#D0F4DE", "#A9DEF9", "#E4C1F9"]
+#style.use("seaborn-paper")
+
 
 rc('text', usetex=True)
 rc('font', **{'family': 'serif', 'serif': ['Times New Roman'], 'size': 21}) #,'weight':'bold'})
@@ -42,6 +46,7 @@ axs[0].errorbar(data_res_full["MJD"][Rcvr_800_GASP],
                 yerr=data_res_full["uncertainty(us)"][Rcvr_800_GASP],
                 fmt='v', elinewidth=4, capthick=4, alpha=0.3,
                 markersize=10, markeredgewidth=3,
+                c=colors[0],
 #                c="#0FA3B1",
                 label="Rcvr_800_GASP",  rasterized=True)
 
@@ -50,14 +55,16 @@ axs[0].errorbar(data_res_full["MJD"][Rcvr_1_2_GASP],
                 yerr=data_res_full["uncertainty(us)"][Rcvr_1_2_GASP],
                 fmt='^', elinewidth=4, capthick=4, alpha=0.3,
                 markersize=10, markeredgewidth=3,
+                c=colors[1],
 #                c="#8CAF83",
-                label="Rcvr_1_2_GASP",  rasterized=True)
+                label="Rcvr1_2_GASP",  rasterized=True)
 
 axs[0].errorbar(data_res_full["MJD"][Rcvr_800_GUPPI],
                 data_res_full["residual(us)"][Rcvr_800_GUPPI],
                 yerr=data_res_full["uncertainty(us)"][Rcvr_800_GUPPI],
                 fmt='v', elinewidth=4, capthick=4, alpha=0.3,
                 markersize=10, markeredgewidth=3,
+                c=colors[2],
 #                c="#A083AF",
                 label="Rcvr_800_GUPPI",  rasterized=True)
 
@@ -66,8 +73,10 @@ axs[0].errorbar(data_res_full["MJD"][Rcvr1_2_GUPPI],
                 yerr=data_res_full["uncertainty(us)"][Rcvr1_2_GUPPI],
                 fmt='^', elinewidth=4, capthick=4, alpha=0.3,
                 markersize=10, markeredgewidth=3,
+                c=colors[4],
 #                c="#A73955",
                 label="Rcvr1_2_GUPPI",  rasterized=True)
+
 
 axs[0].axhline(0.0, color='grey', ls="--", lw=3, zorder=0)
 axs[0].axvline(Time(2010.2, format='decimalyear', scale='utc').mjd, color='black', ls="--", lw=4, zorder=0)
@@ -85,6 +94,7 @@ for ax in fig.axes[1:]:
                 yerr=data_res_avg["uncertainty(us)"][Rcvr_800_GASP],
                 fmt='v', elinewidth=4, capthick=4,
                 markersize=10, markeredgewidth=3,
+                c=colors[0],
 #                c="#0FA3B1",
                 label="GASP Rcvr_800")
 
@@ -93,15 +103,17 @@ for ax in fig.axes[1:]:
                 yerr=data_res_avg["uncertainty(us)"][Rcvr_1_2_GASP],
                 fmt='^', elinewidth=4, capthick=4,
                 markersize=10, markeredgewidth=3,
-#                c="#8CAF83",
-                label="GASP Rcvr_1_2")
+                c=colors[1],
+                #                c="#8CAF83",
+                label="GASP Rcvr1$\_$2")
 
     ax.errorbar(data_res_avg["MJD"][Rcvr_800_GUPPI],
                 data_res_avg["residual(us)"][Rcvr_800_GUPPI],
                 yerr=data_res_avg["uncertainty(us)"][Rcvr_800_GUPPI],
                 fmt='v', elinewidth=4, capthick=4,
                 markersize=10, markeredgewidth=3,
-#                c="#A083AF",
+                c=colors[2],
+                #                c="#A083AF",
                 label="GUPPI Rcvr_800")
 
     ax.errorbar(data_res_avg["MJD"][Rcvr1_2_GUPPI],
@@ -109,8 +121,11 @@ for ax in fig.axes[1:]:
                 yerr=data_res_avg["uncertainty(us)"][Rcvr1_2_GUPPI],
                 fmt='^', elinewidth=4, capthick=4,
                 markersize=10, markeredgewidth=3,
-#                c="#A73955",
-                label="GUPPI Rcvr1_2")
+                c=colors[4],
+                #                c="#A73955",
+                label="GUPPI Rcvr1$\_$2")
+
+
 
     ax.axvline(Time(2010.2, format='decimalyear', scale='utc').mjd, color='black', ls="--", lw=4, zorder=0)
 
@@ -147,4 +162,5 @@ axtime2.xaxis.set_major_formatter(FormatStrFormatter('%i'))
 
 plt.tight_layout()
 plt.savefig("./figures/plot_residuals.pdf")
+plt.savefig("./figures/plot_residuals.png")
 #plt.show()

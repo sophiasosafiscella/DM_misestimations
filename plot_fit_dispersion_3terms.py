@@ -49,6 +49,7 @@ fig, axs = plt.subplots(figsize=(12, 6), nrows=1, ncols=2, sharex=True, sharey=T
 parfile = "./NANOGrav_12yv4/narrowband/par/" + PSR_name + "_NANOGrav_12yv4.gls.par"
 timfile = "./NANOGrav_12yv4/narrowband/tim/" + PSR_name + "_NANOGrav_12yv4.tim"
 
+sign_figures : int = 1    # Number of significant figures
 
 for i, (dataset, ax) in enumerate(zip(["Broadband", "Narrowband"], axs)):
 
@@ -119,12 +120,12 @@ for i, (dataset, ax) in enumerate(zip(["Broadband", "Narrowband"], axs)):
 
         # Include the fit results in a text box
         at = AnchoredText(
-            "$r_\mathrm{\infty}$ = " + str(round(result.params['t_infty'].value, 2)).replace("-", "$-$") + "$\pm$"
-            + str(round(result.params['t_infty'].stderr, 2)) + " $\mu$s \n" +
-            "$r_\mathrm{2}$ = " + str(round(result.best_values['k_DMX'], 2)) + "$\pm$"
-            + str(round(result.params['k_DMX'].stderr, 2)) + " $\mu$s $\mathrm{GHz^2}$ \n" +
-            "$r_\mathrm{\\alpha}$ = " + str(round(result.best_values['t_alpha'], 2)) + "$\pm$"
-            + str(round(result.params['t_alpha'].stderr, 2)) + " $\mu$s $\mathrm{GHz^{- \\alpha}}$",
+            "$r_\mathrm{\infty}$ = " + str(round(result.params['t_infty'].value, sign_figures)).replace("-", "$-$") + "$\pm$"
+            + str(round(result.params['t_infty'].stderr, sign_figures)) + " $\mu$s \n" +
+            "$r_\mathrm{2}$ = " + str(round(result.best_values['k_DMX'], sign_figures)) + "$\pm$"
+            + str(round(result.params['k_DMX'].stderr, sign_figures)) + " $\mu$s $\mathrm{GHz^2}$ \n" +
+            "$r_\mathrm{\\alpha}$ = " + str(round(result.best_values['t_alpha'], sign_figures)) + "$\pm$"
+            + str(round(result.params['t_alpha'].stderr, sign_figures)) + " $\mu$s $\mathrm{GHz^{- \\alpha}}$",
             prop=dict(size=20), frameon=True, loc='upper right')
         at.patch.set_boxstyle("round,pad=0.,rounding_size=0.2")
         ax.add_artist(at)
@@ -141,20 +142,22 @@ for i, (dataset, ax) in enumerate(zip(["Broadband", "Narrowband"], axs)):
 #        ax.grid()
         ax.set_title(dataset)
         ax.set_xlabel("Frequency [GHz]")
+        ax.set_xticks([0.75, 1.0, 1.25, 1.50, 1.75])
+        ax.set_xticks([56000, 57000], minor=True)
         ax.tick_params(axis='both', which='major')
 
         if dataset == "Broadband":
-            ax.set_ylabel('Residuals [$\mu s$]')
+            ax.set_ylabel('Residuals [$\mu \mathrm{s}$]')
+            ax.axvspan(0.722, 0.919, alpha=0.4, color="#55CDFC", label="$\mathrm{GUPPI - Revr\_800}$")
+            ax.axvspan(1.151, 1.885, alpha=0.4, color="#F7A8B8", label="$\mathrm{GUPPI - Revr1\_2}$")
+        else:
+            ax.axvspan(0.822, 0.866, alpha=0.4, color="#55CDFC", label="$\mathrm{GASP - Revr\_800}$")
+            ax.axvspan(1.386, 1.434, alpha=0.4, color="#F7A8B8", label="$\mathrm{GASP - Revr1\_2}$")
 
-
-        ax.axvspan(0.822, 0.866, alpha=0.4, color='C2', label="GASP - Revr_800")
-        ax.axvspan(1.386, 1.434, alpha=0.4, color='C3', label="GASP - Revr1_2")
-
-        if i==1:
-            ax.legend(loc=1, bbox_to_anchor=(1.0, 0.71), fancybox=True, shadow=True)
+        ax.legend(loc=1, bbox_to_anchor=(1.0, 0.71), fancybox=True, shadow=True)
 
 plt.tight_layout()
 plt.savefig('./figures/fits.pdf')
-plt.show()
+#plt.show()
 
 print("Done!")

@@ -10,7 +10,7 @@ from lmfit import Model, Parameters
 from matplotlib.offsetbox import AnchoredText
 
 
-def acf_new(times, x, month=30.0):
+def acf_new(times, x, month=60.0):
     length = len(x)
     num_lags = int(np.ceil((np.max(times) - np.min(times)) / month) + 1)  # +1?
     bin_centers = np.arange(num_lags) * month
@@ -27,7 +27,7 @@ def acf_new(times, x, month=30.0):
             # we only calculate the ACF when the distance is positive
             while distance >= bin_centers[index]:
 
-                if bin_centers[index] - 15.0 < distance <= bin_centers[index] + 15.0:
+                if bin_centers[index] - month/2 < distance <= bin_centers[index] + month/2:
                     N_taus[index] += 1
                     retval[index] += x[i] * x[j]
 
@@ -50,12 +50,14 @@ def autocovariance_functions(axs, nterms, narrowband_data, broadband_data):
     # find the middle points
     t = (narrowband_data[:, 1] + narrowband_data[:, 0]) / 2.0
 
+    colors = ["#D60270", '#9B4F96', '#0038A8']
+
     for i, ax in enumerate(axs[:, 0]):
         diff = broadband_data[:, 2 * (i + 1)] - narrowband_data[:, 2 * (i + 1)]
         taus, retval = acf_new(t, diff - np.mean(diff))
         retval /= np.amax(retval)
 
-        ax.plot(taus, retval, c='C' + str(i))
+        ax.plot(taus, retval, c=colors[i])
         ax.axhline(0.0, ls='--', c='black')
 
         ax.text(0.025, 0.05, "(" + string.ascii_lowercase[i] + ")", transform=ax.transAxes,
@@ -77,7 +79,7 @@ def exponential_curve_2(x, b, tau_0):
     return b / np.exp(x / tau_0)
 
 
-def characteristic_time(fig, axs, gs, narrowband_data, broadband_data):
+def characteristic_time(fig, axs, gs, narrowband_data, broadband_data, sign_figures):
     char_t_plot = fig.add_subplot(gs[:, 1])
     char_t_plot.set_title("Characteristic Time")
     char_t_plot.text(0.025, 0.025, "(d)", transform=char_t_plot.transAxes, size=text_size)
@@ -111,10 +113,10 @@ def characteristic_time(fig, axs, gs, narrowband_data, broadband_data):
     char_t_plot.legend(fancybox=True, shadow=True)
 
     at = AnchoredText(
-        "$\mathrm{b}$ = " + str(round(results2.params['b'].value, 4)) + " $\pm$ " + str(
-            round(results2.params['b'].stderr, 4)) + "\n" +
-        "$\mathrm{\\tau}_{0} = $" + str(round(results2.params['tau_0'].value, 4)) + " $\pm$ " + str(
-            round(results2.params['tau_0'].stderr, 4)),
+        "$\mathrm{b}$ = " + str(round(results2.params['b'].value, sign_figures)) + " $\pm$ " + str(
+            round(results2.params['b'].stderr, sign_figures)) + "\n" +
+        "$\mathrm{\\tau}_{0} = $" + str(round(results2.params['tau_0'].value, sign_figures)) + " $\pm$ " + str(
+            round(results2.params['tau_0'].stderr, sign_figures)),
         prop=dict(size=text_size), frameon=True, loc='center right')
     at.patch.set_boxstyle("round,pad=0.,rounding_size=0.2")
     char_t_plot.add_artist(at)
@@ -129,7 +131,9 @@ def characteristic_time(fig, axs, gs, narrowband_data, broadband_data):
 PSR_name = "J1643-1224"
 # PSR_name = "J1744-1134"
 
-nterms = 3
+nterms : int = 3
+sign_figures : int = 1
+
 sns.set_style("ticks")
 sns.set_context("paper") #, font_scale=2.0, rc={"lines.linewidth": 3})
 #plt.rcParams.update({"text.usetex": True})
@@ -162,7 +166,7 @@ axs = gs.subplots(sharex=False, sharey=False)
 
 autocovariance_functions(axs, nterms, narrowband_data, broadband_data)
 
-characteristic_time(fig, axs, gs, narrowband_data, broadband_data)
+characteristic_time(fig, axs, gs, narrowband_data, broadband_data, sign_figures)
 
 plt.tight_layout()
 plt.savefig("./figures/" + PSR_name + "_autocovariance.pdf")
