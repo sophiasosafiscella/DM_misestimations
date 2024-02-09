@@ -16,5 +16,7 @@ This Zenodo dataset contains the data processing pipeline, as well as the data p
 - `3_autocovariance.py` calculates the autocovariance function of the differences in the fitted values, and creates the corresponding plots.
 - All the files starting with `plot` are convenience scripts for creating the plots presented in the paper.
 - All the files starting with `sophia` are utility functions that are used in the main pipeline.
+- The folder `NANOGrav_12yv4` contains the dataset analyzed in this work.
+- The folder `NG_timing_analysis` contains utility functions created by the NANOGrav collaboration that are used in the main pipeline.
 
 Please do not hesitate to send all your questions, concerns, or commentaries to sophia.sosa@nanograv.org
